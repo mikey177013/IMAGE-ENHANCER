@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Image Enhancer AI | Professional Enhancement Tool</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --primary-light: #4895ef;
+      --secondary: #f72585;
+      --secondary-dark: #e01e74;
+      --accent: #4cc9f0;
+      --light: #f8f9fa;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --gray-light: #edf2f4;
+      --success: #4ade80;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-fast: all 0.15s ease;
+      --border-radius: 12px;
+      --border-radius-lg: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 400;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .watermark {
+      position: absolute;
+      bottom: 15px;
+      right: 25px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+
+    .content {
+      padding: 2.5rem;
+    }
+
+    .upload-area {
+      border: 3px dashed var(--primary-light);
+      border-radius: var(--border-radius);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      transition: var(--transition);
+      background: rgba(67, 97, 238, 0.03);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: var(--transition);
+    }
+
+    .upload-area:hover::before {
+      left: 100%;
+    }
+
+    .upload-area:hover {
+      background: rgba(67, 97, 238, 0.08);
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .upload-area.active {
+      border-color: var(--success);
+      background: rgba(74, 222, 128, 0.08);
+    }
+
+    .upload-icon {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.5rem;
+      color: var(--primary);
+      transition: var(--transition);
+      filter: drop-shadow(0 4px 8px rgba(67, 97, 238, 0.2));
+    }
+
+    .upload-area:hover .upload-icon {
+      transform: scale(1.1) translateY(-5px);
+      color: var(--primary-dark);
+    }
+
+    .upload-text h3 {
+      font-size: 1.7rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .upload-text p {
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+      color: white;
+      border: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(247, 37, 133, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: var(--transition);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(247, 37, 133, 0.3);
+    }
+
+    .btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-secondary:hover {
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .preview-container {
+      display: none;
+      margin-top: 2rem;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .preview-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+      color: var(--dark);
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .preview-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 3px;
+    }
+
+    .image-comparison {
+      position: relative;
+      width: 100%;
+      height: 450px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: var(--gray-light);
+    }
+
+    .image-comparison img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--gray-light);
+    }
+
+    .image-before {
+      z-index: 1;
+    }
+
+    .image-after {
+      z-index: 2;
+      clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+    }
+
+    .slider-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: 100%;
+      width: 4px;
+      z-index: 3;
+      transform: translateX(-50%);
+      cursor: col-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: white;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.2);
+      transition: var(--transition-fast);
+    }
+
+    .slider:hover {
+      width: 6px;
+      background: var(--primary-light);
+    }
+
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 46px;
+      height: 46px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .slider-handle::before,
+    .slider-handle::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+
+    .slider-handle::before {
+      border-width: 6px 0 6px 8px;
+      border-color: transparent transparent transparent var(--primary);
+      margin-left: -2px;
+    }
+
+    .slider-handle::after {
+      border-width: 6px 8px 6px 0;
+      border-color: transparent var(--primary) transparent transparent;
+      margin-left: 2px;
+    }
+
+    .slider-container:hover .slider-handle {
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .slider-container.dragging .slider-handle {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    .comparison-label {
+      position: absolute;
+      top: 20px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      z-index: 4;
+      backdrop-filter: blur(5px);
+      transition: var(--transition);
+    }
+
+    .label-before {
+      left: 20px;
+    }
+
+    .label-after {
+      right: 20px;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .spinner {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 1.5rem;
+      border: 5px solid rgba(67, 97, 238, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+      position: relative;
+    }
+
+    .spinner::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border-radius: 50%;
+      border: 5px solid transparent;
+      border-top-color: var(--secondary);
+      animation: spin 1.5s linear infinite reverse;
+    }
+
+    .loading p {
+      color: var(--dark);
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.5s steps(5, end) infinite;
+    }
+
+    .error {
+      display: none;
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--error);
+      padding: 1.2rem;
+      border-radius: var(--border-radius);
+      margin-top: 1.5rem;
+      text-align: center;
+      animation: shake 0.5s ease;
+      border-left: 4px solid var(--error);
+      font-weight: 500;
+    }
+
+    .success {
+      display: none;
+      background: rgba(74, 222, 128, 0.08);
+      color: var(--success);
+      padding: 1.2rem;
+      border-radius: var(--border-radius);
+      margin-top: 1.5rem;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+      border-left: 4px solid var(--success);
+      font-weight: 500;
+    }
+
+    .info-box {
+      background: rgba(67, 97, 238, 0.05);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .info-box h4 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .info-box p {
+      color: var(--dark);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      color: var(--gray);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes dots {
+
+      0%,
+      20% {
+        content: '';
+      }
+
+      40% {
+        content: '.';
+      }
+
+      60% {
+        content: '..';
+      }
+
+      80%,
+      100% {
+        content: '...';
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-5px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        border-radius: 16px;
+      }
+
+      .header {
+        padding: 2rem 1.5rem;
+      }
+
+      .header h1 {
+        font-size: 2.2rem;
+      }
+
+      .content {
+        padding: 2rem 1.5rem;
+      }
+
+      .upload-area {
+        padding: 2.5rem 1.5rem;
+      }
+
+      .image-comparison {
+        height: 350px;
+      }
+
+      .result-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .comparison-label {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .header p {
+        font-size: 1rem;
+      }
+
+      .upload-icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .upload-text h3 {
+        font-size: 1.4rem;
+      }
+
+      .image-comparison {
+        height: 280px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="header">
+
+      <div class="header-content">
+
+        <h1>Image Enhance AI</h1>
+
+        <p>Transform your blurry images into crystal-clear masterpieces with advanced AI enhancement</p>
+
+        <div class="watermark">PHOENIX</div>
+
+      </div>
+
+    </div>
+
+    <div class="content">
+
+      <div class="upload-area" id="uploadArea">
+
+        <div class="upload-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+          </svg>
+
+        </div>
+
+        <div class="upload-text">
+
+          <h3>Upload Your Image</h3>
+
+          <p>Drag & drop your blurry image here or click to browse files</p>
+
+        </div>
+
+        <button class="btn" id="uploadBtn">
+
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            <path d="M8 16H6C4.89543 16 4 16.8954 4 18V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V18C20 16.8954 19.1046 16 18 16H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+          </svg>
+
+          Select Image
+
+        </button>
+
+        <input type="file" id="fileInput" class="file-input" accept="image/*">
+
+      </div>
+
+      <div class="loading" id="loading">
+
+        <div class="spinner"></div>
+
+        <p>Processing your image<span class="loading-dots"></span></p>
+
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="success" id="success"></div>
+
+      <div class="preview-container" id="previewContainer">
+
+        <h3 class="preview-title">Compare Results</h3>
+
+        <div class="image-comparison" id="imageComparison">
+
+          <div class="comparison-label label-before">Original</div>
+
+          <div class="comparison-label label-after">Enhanced</div>
+
+          <img class="image-before" id="imageBefore" src="" alt="Original image">
+
+          <img class="image-after" id="imageAfter" src="" alt="Enhanced image">
+
+          <div class="slider-container" id="sliderContainer">
+
+            <div class="slider">
+
+              <div class="slider-handle"></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="result-actions">
+
+          <button class="btn" id="downloadBtn">
+
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+              <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+              <path d="M8 16H6C4.89543 16 4 16.8954 4 18V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V18C20 16.8954 19.1046 16 18 16H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            </svg>
+
+            Download Enhanced
+
+          </button>
+
+          <button class="btn btn-secondary" id="resetBtn">
+
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+              <path d="M1 4V10H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+              <path d="M23 20V14H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+              <path d="M20.49 9C19.9828 7.56678 19.1209 6.2854 17.9845 5.27542C16.8482 4.26543 15.4745 3.55976 13.9917 3.22426C12.5089 2.88875 10.9652 2.93434 9.50481 3.35677C8.04437 3.77921 6.71475 4.56471 5.64 5.64L1 10M23 14L18.36 18.36C17.2853 19.4353 15.9556 20.2208 14.4952 20.6432C13.0348 21.0657 11.4911 21.1113 10.0083 20.7757C8.52547 20.4402 7.1518 19.7346 6.01547 18.7246C4.87913 17.7146 4.01717 16.4332 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+            </svg>
+
+            Process Another
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="info-box">
+
+        <h4>How It Works</h4>
+
+        <p>Our AI analyzes your image to detect blur patterns and intelligently enhances details, sharpness, and clarity. The process typically takes 15-45 seconds depending on image size and complexity.</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer">
+
+    <p>Powered by AI Image Enhancement Technology</p>
+
+  </div>
+
+  <script>
+    // DOM Elements
+    const uploadArea = document.getElementById('uploadArea');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const success = document.getElementById('success');
+    const previewContainer = document.getElementById('previewContainer');
+    const imageBefore = document.getElementById('imageBefore');
+    const imageAfter = document.getElementById('imageAfter');
+    const sliderContainer = document.getElementById('sliderContainer');
+    const slider = document.querySelector('.slider');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    // Variables
+    let originalImageUrl = '';
+    let enhancedImageUrl = '';
+    let isDragging = false;
+    let startX = 0;
+    let sliderPosition = 50;
+    // Event Listeners
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', handleDragOver);
+    uploadArea.addEventListener('dragleave', handleDragLeave);
+    uploadArea.addEventListener('drop', handleDrop);
+    fileInput.addEventListener('change', handleFileSelect);
+    // Slider events for mouse
+    sliderContainer.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', handleDrag);
+    document.addEventListener('mouseup', stopDrag);
+    // Slider events for touch
+    sliderContainer.addEventListener('touchstart', handleTouchStart, {
+      passive: false
+    });
+    document.addEventListener('touchmove', handleTouchMove, {
+      passive: false
+    });
+    document.addEventListener('touchend', stopDrag);
+    downloadBtn.addEventListener('click', downloadImage);
+    resetBtn.addEventListener('click', resetApp);
+    // Functions
+    function handleDragOver(e) {
+      e.preventDefault();
+      uploadArea.classList.add('active');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      // Only remove active class if leaving the upload area
+      if (!uploadArea.contains(e.relatedTarget)) {
+        uploadArea.classList.remove('active');
+      }
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('active');
+      if (e.dataTransfer.files.length) {
+        processFile(e.dataTransfer.files[0]);
+      }
+    }
+
+    function handleFileSelect(e) {
+      if (e.target.files.length) {
+        processFile(e.target.files[0]);
+      }
+    }
+
+    function processFile(file) {
+      // Validate file type
+      if (!file.type.match('image.*')) {
+        showError('Please select a valid image file (JPEG, PNG, etc.)');
+        return;
+      }
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        showError('Image size should be less than 10MB');
+        return;
+      }
+      // Reset previous state
+      resetApp();
+      // Show loading
+      loading.style.display = 'block';
+      // Create object URL for the original image
+      originalImageUrl = URL.createObjectURL(file);
+      imageBefore.src = originalImageUrl;
+      // Create FormData for API request
+      const formData = new FormData();
+      formData.append('original_image_file', file);
+      formData.append('scale_factor', 2);
+      formData.append('upscale_type', 'image-upscale');
+      // Generate serial
+      const serial = generateSerial();
+      const headers = {
+        'product-serial': serial
+      };
+      // Make API request
+      unblurImage(formData, headers)
+        .then(result => {
+          loading.style.display = 'none';
+          if (result.error) {
+            showError('Failed to process image: ' + (result.error.message || 'Unknown error'));
+          } else {
+            enhancedImageUrl = result.output;
+            imageAfter.src = enhancedImageUrl;
+            // Show preview once both images are loaded
+            Promise.all([
+              loadImage(imageBefore),
+              loadImage(imageAfter)
+            ]).then(() => {
+              previewContainer.style.display = 'block';
+              showSuccess('Image successfully enhanced! Drag the slider to compare.');
+            }).catch(err => {
+              showError('Failed to load images: ' + err.message);
+            });
+          }
+        })
+        .catch(err => {
+          loading.style.display = 'none';
+          showError('Failed to process image: ' + err.message);
+        });
+    }
+
+    function unblurImage(formData, headers) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await axios.post(
+            'https://api.unblurimage.ai/api/imgupscaler/v2/ai-image-unblur/create-job',
+            formData, {
+              headers
+            }
+          );
+          const jobId = res.data?.result?.job_id;
+          if (!jobId) {
+            reject(new Error('Job ID not found'));
+            return;
+          }
+          let output, done = false;
+          const timeout = Date.now() + 180000; // 3 minutes
+          while (!done && Date.now() < timeout) {
+            try {
+              const poll = await axios.get(
+                `https://api.unblurimage.ai/api/imgupscaler/v2/ai-image-unblur/get-job/${jobId}`, {
+                  headers
+                }
+              );
+              if (poll.data.code === 100000 && poll.data.result?.output_url?.[0]) {
+                output = poll.data.result.output_url[0];
+                done = true;
+              } else {
+                await new Promise(r => setTimeout(r, 3000));
+              }
+            } catch (pollError) {
+              // Continue polling even if one request fails
+              await new Promise(r => setTimeout(r, 3000));
+            }
+          }
+          if (done) {
+            resolve({
+              jobId,
+              output
+            });
+          } else {
+            reject(new Error('Processing timeout'));
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }
+
+    function generateSerial() {
+      const array = new Uint8Array(16);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    function loadImage(img) {
+      return new Promise((resolve, reject) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('Failed to load image'));
+        }
+      });
+    }
+
+    function startDrag(e) {
+      isDragging = true;
+      startX = e.clientX;
+      sliderContainer.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      e.preventDefault();
+    }
+
+    function handleTouchStart(e) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      sliderContainer.classList.add('dragging');
+      e.preventDefault();
+    }
+
+    function handleDrag(e) {
+      if (!isDragging) return;
+      const container = document.getElementById('imageComparison');
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      updateSliderPosition(x, rect.width);
+      e.preventDefault();
+    }
+
+    function handleTouchMove(e) {
+      if (!isDragging) return;
+      const container = document.getElementById('imageComparison');
+      const rect = container.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      updateSliderPosition(x, rect.width);
+      e.preventDefault();
+    }
+
+    function updateSliderPosition(x, containerWidth) {
+      const percent = Math.max(0, Math.min(100, (x / containerWidth) * 100));
+      sliderPosition = percent;
+      imageAfter.style.clipPath = `polygon(0 0, ${percent}% 0, ${percent}% 100%, 0 100%)`;
+      sliderContainer.style.left = `${percent}%`;
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      sliderContainer.classList.remove('dragging');
+      document.body.style.cursor = 'default';
+    }
+
+    function downloadImage() {
+      if (!enhancedImageUrl) return;
+      const a = document.createElement('a');
+      a.href = enhancedImageUrl;
+      a.download = 'enhanced-image.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function resetApp() {
+      // Reset UI
+      previewContainer.style.display = 'none';
+      loading.style.display = 'none';
+      error.style.display = 'none';
+      success.style.display = 'none';
+      uploadArea.classList.remove('active');
+      // Reset file input
+      fileInput.value = '';
+      // Reset slider position
+      sliderPosition = 50;
+      imageAfter.style.clipPath = 'polygon(0 0, 50% 0, 50% 100%, 0 100%)';
+      sliderContainer.style.left = '50%';
+      // Clean up object URLs
+      if (originalImageUrl) {
+        URL.revokeObjectURL(originalImageUrl);
+        originalImageUrl = '';
+      }
+    }
+
+    function showError(message) {
+      error.textContent = message;
+      error.style.display = 'block';
+      success.style.display = 'none';
+    }
+
+    function showSuccess(message) {
+      success.textContent = message;
+      success.style.display = 'block';
+      error.style.display = 'none';
+    }
+  </script>
+
+</body>
+
+</html>
