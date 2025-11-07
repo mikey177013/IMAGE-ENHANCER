@@ -1063,6 +1063,42 @@
       success.style.display = 'block';
       error.style.display = 'none';
     }
+// Anti-copy protection for Phoenix watermark
+document.addEventListener('DOMContentLoaded', function() {
+  const watermark = document.getElementById('phoenixWatermark');
+  
+  // Prevent right-click context menu
+  watermark.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+  });
+  
+  // Prevent text selection
+  watermark.style.userSelect = 'none';
+  watermark.style.webkitUserSelect = 'none';
+  watermark.style.mozUserSelect = 'none';
+  watermark.style.msUserSelect = 'none';
+  
+  // Prevent drag
+  watermark.setAttribute('draggable', 'false');
+  
+  // Console protection (basic)
+  const originalConsole = console.log;
+  console.log = function() {
+    if (arguments[0] && typeof arguments[0] === 'string' && 
+        arguments[0].includes('PHOENIX')) {
+      return; // Block logging of PHOENIX text
+    }
+    originalConsole.apply(console, arguments);
+  };
+});
+
+// Additional protection against DOM inspection
+Object.defineProperty(window, 'PHOENIX', {
+  value: 'Protected Content',
+  writable: false,
+  configurable: false
+});
   </script>
 </body>
 </html>
