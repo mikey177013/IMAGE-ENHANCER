@@ -1,17 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Image Enhancer AI | Professional Enhancement Tool</title>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
-
   <style>
     :root {
       --primary: #4361ee;
@@ -103,15 +96,6 @@
       font-weight: 400;
       max-width: 600px;
       margin: 0 auto;
-    }
-
-    .watermark {
-      position: absolute;
-      bottom: 15px;
-      right: 25px;
-      font-size: 0.85rem;
-      opacity: 0.7;
-      font-weight: 500;
     }
 
     .content {
@@ -510,6 +494,40 @@
       font-weight: 500;
     }
 
+    /* Phoenix Watermark */
+    .phoenix-watermark {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+
+    .phoenix-watermark:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .phoenix-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      font-weight: 700;
+      color: var(--primary-dark);
+      font-size: 0.9rem;
+    }
+
+    .phoenix-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--secondary);
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -625,6 +643,11 @@
         font-size: 0.8rem;
         padding: 6px 12px;
       }
+
+      .phoenix-watermark {
+        top: 10px;
+        right: 10px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -654,165 +677,104 @@
       }
     }
   </style>
-
 </head>
 
 <body>
+  <!-- Phoenix Watermark -->
+  <div class="phoenix-watermark">
+    <div class="phoenix-logo">
+      <svg class="phoenix-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 8C19.5 8 21 10 21 12C21 14 19.5 16 17 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 8H14C16.5 8 18 10 18 12C18 14 16.5 16 14 16H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 12H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M13 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>PHOENIX</span>
+    </div>
+  </div>
 
   <div class="container">
-
     <div class="header">
-
       <div class="header-content">
-
         <h1>Image Enhance AI</h1>
-
         <p>Transform your blurry images into crystal-clear masterpieces with advanced AI enhancement</p>
-
-        <div class="watermark">PHOENIX</div>
-
       </div>
-
     </div>
 
     <div class="content">
-
       <div class="upload-area" id="uploadArea">
-
         <div class="upload-icon">
-
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-
             <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
           </svg>
-
         </div>
-
         <div class="upload-text">
-
           <h3>Upload Your Image</h3>
-
           <p>Drag & drop your blurry image here or click to browse files</p>
-
         </div>
-
         <button class="btn" id="uploadBtn">
-
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-
             <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             <path d="M8 16H6C4.89543 16 4 16.8954 4 18V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V18C20 16.8954 19.1046 16 18 16H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
           </svg>
-
           Select Image
-
         </button>
-
         <input type="file" id="fileInput" class="file-input" accept="image/*">
-
       </div>
 
       <div class="loading" id="loading">
-
         <div class="spinner"></div>
-
         <p>Processing your image<span class="loading-dots"></span></p>
-
       </div>
 
       <div class="error" id="error"></div>
-
       <div class="success" id="success"></div>
 
       <div class="preview-container" id="previewContainer">
-
         <h3 class="preview-title">Compare Results</h3>
-
         <div class="image-comparison" id="imageComparison">
-
           <div class="comparison-label label-before">Original</div>
-
           <div class="comparison-label label-after">Enhanced</div>
-
           <img class="image-before" id="imageBefore" src="" alt="Original image">
-
           <img class="image-after" id="imageAfter" src="" alt="Enhanced image">
-
           <div class="slider-container" id="sliderContainer">
-
             <div class="slider">
-
               <div class="slider-handle"></div>
-
             </div>
-
           </div>
-
         </div>
-
         <div class="result-actions">
-
           <button class="btn" id="downloadBtn">
-
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-
               <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
               <path d="M8 16H6C4.89543 16 4 16.8954 4 18V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V18C20 16.8954 19.1046 16 18 16H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             </svg>
-
             Download Enhanced
-
           </button>
-
           <button class="btn btn-secondary" id="resetBtn">
-
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-
               <path d="M1 4V10H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
               <path d="M23 20V14H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
               <path d="M20.49 9C19.9828 7.56678 19.1209 6.2854 17.9845 5.27542C16.8482 4.26543 15.4745 3.55976 13.9917 3.22426C12.5089 2.88875 10.9652 2.93434 9.50481 3.35677C8.04437 3.77921 6.71475 4.56471 5.64 5.64L1 10M23 14L18.36 18.36C17.2853 19.4353 15.9556 20.2208 14.4952 20.6432C13.0348 21.0657 11.4911 21.1113 10.0083 20.7757C8.52547 20.4402 7.1518 19.7346 6.01547 18.7246C4.87913 17.7146 4.01717 16.4332 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
             </svg>
-
             Process Another
-
           </button>
-
         </div>
-
       </div>
 
       <div class="info-box">
-
         <h4>How It Works</h4>
-
         <p>Our AI analyzes your image to detect blur patterns and intelligently enhances details, sharpness, and clarity. The process typically takes 15-45 seconds depending on image size and complexity.</p>
-
       </div>
-
     </div>
-
   </div>
 
   <div class="footer">
-
     <p>Powered by AI Image Enhancement Technology</p>
-
   </div>
 
   <script>
@@ -830,32 +792,34 @@
     const slider = document.querySelector('.slider');
     const downloadBtn = document.getElementById('downloadBtn');
     const resetBtn = document.getElementById('resetBtn');
+    
     // Variables
     let originalImageUrl = '';
     let enhancedImageUrl = '';
     let isDragging = false;
     let startX = 0;
     let sliderPosition = 50;
+
     // Event Listeners
     uploadBtn.addEventListener('click', () => fileInput.click());
     uploadArea.addEventListener('dragover', handleDragOver);
     uploadArea.addEventListener('dragleave', handleDragLeave);
     uploadArea.addEventListener('drop', handleDrop);
     fileInput.addEventListener('change', handleFileSelect);
+    
     // Slider events for mouse
     sliderContainer.addEventListener('mousedown', startDrag);
     document.addEventListener('mousemove', handleDrag);
     document.addEventListener('mouseup', stopDrag);
+    
     // Slider events for touch
-    sliderContainer.addEventListener('touchstart', handleTouchStart, {
-      passive: false
-    });
-    document.addEventListener('touchmove', handleTouchMove, {
-      passive: false
-    });
+    sliderContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', stopDrag);
+    
     downloadBtn.addEventListener('click', downloadImage);
     resetBtn.addEventListener('click', resetApp);
+
     // Functions
     function handleDragOver(e) {
       e.preventDefault();
@@ -890,28 +854,35 @@
         showError('Please select a valid image file (JPEG, PNG, etc.)');
         return;
       }
+      
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         showError('Image size should be less than 10MB');
         return;
       }
+      
       // Reset previous state
       resetApp();
+      
       // Show loading
       loading.style.display = 'block';
+      
       // Create object URL for the original image
       originalImageUrl = URL.createObjectURL(file);
       imageBefore.src = originalImageUrl;
+      
       // Create FormData for API request
       const formData = new FormData();
       formData.append('original_image_file', file);
       formData.append('scale_factor', 2);
       formData.append('upscale_type', 'image-upscale');
+      
       // Generate serial
       const serial = generateSerial();
       const headers = {
         'product-serial': serial
       };
+      
       // Make API request
       unblurImage(formData, headers)
         .then(result => {
@@ -921,6 +892,7 @@
           } else {
             enhancedImageUrl = result.output;
             imageAfter.src = enhancedImageUrl;
+            
             // Show preview once both images are loaded
             Promise.all([
               loadImage(imageBefore),
@@ -944,24 +916,25 @@
         try {
           const res = await axios.post(
             'https://api.unblurimage.ai/api/imgupscaler/v2/ai-image-unblur/create-job',
-            formData, {
-              headers
-            }
+            formData, { headers }
           );
+          
           const jobId = res.data?.result?.job_id;
           if (!jobId) {
             reject(new Error('Job ID not found'));
             return;
           }
+          
           let output, done = false;
           const timeout = Date.now() + 180000; // 3 minutes
+          
           while (!done && Date.now() < timeout) {
             try {
               const poll = await axios.get(
-                `https://api.unblurimage.ai/api/imgupscaler/v2/ai-image-unblur/get-job/${jobId}`, {
-                  headers
-                }
+                `https://api.unblurimage.ai/api/imgupscaler/v2/ai-image-unblur/get-job/${jobId}`,
+                { headers }
               );
+              
               if (poll.data.code === 100000 && poll.data.result?.output_url?.[0]) {
                 output = poll.data.result.output_url[0];
                 done = true;
@@ -973,11 +946,9 @@
               await new Promise(r => setTimeout(r, 3000));
             }
           }
+          
           if (done) {
-            resolve({
-              jobId,
-              output
-            });
+            resolve({ jobId, output });
           } else {
             reject(new Error('Processing timeout'));
           }
@@ -1052,6 +1023,7 @@
 
     function downloadImage() {
       if (!enhancedImageUrl) return;
+      
       const a = document.createElement('a');
       a.href = enhancedImageUrl;
       a.download = 'enhanced-image.jpg';
@@ -1067,12 +1039,15 @@
       error.style.display = 'none';
       success.style.display = 'none';
       uploadArea.classList.remove('active');
+      
       // Reset file input
       fileInput.value = '';
+      
       // Reset slider position
       sliderPosition = 50;
       imageAfter.style.clipPath = 'polygon(0 0, 50% 0, 50% 100%, 0 100%)';
       sliderContainer.style.left = '50%';
+      
       // Clean up object URLs
       if (originalImageUrl) {
         URL.revokeObjectURL(originalImageUrl);
@@ -1092,7 +1067,5 @@
       error.style.display = 'none';
     }
   </script>
-
 </body>
-
 </html>
