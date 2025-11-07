@@ -500,7 +500,7 @@
       top: 20px;
       right: 20px;
       z-index: 1000;
-      opacity: 0.7;
+      opacity: 0.8;
       transition: var(--transition);
     }
 
@@ -522,10 +522,11 @@
       font-size: 0.9rem;
     }
 
-    .phoenix-icon {
-      width: 20px;
-      height: 20px;
-      color: var(--secondary);
+    .logo-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
     @keyframes fadeIn {
@@ -683,12 +684,7 @@
   <!-- Phoenix Watermark -->
   <div class="phoenix-watermark">
     <div class="phoenix-logo">
-      <svg class="phoenix-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17 8C19.5 8 21 10 21 12C21 14 19.5 16 17 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 8H14C16.5 8 18 10 18 12C18 14 16.5 16 14 16H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 12H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M13 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <img src="https://i.ibb.co/29SLN2z/Picsart-25-10-28-17-55-03-525.png" alt="Phoenix Logo" class="logo-img">
       <span>PHOENIX</span>
     </div>
   </div>
